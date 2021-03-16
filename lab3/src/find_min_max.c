@@ -5,6 +5,7 @@
 struct MinMax GetMinMax(int *array, unsigned int begin, unsigned int end) {
   struct MinMax min_max;
   int i;
+  
   min_max.min = INT_MAX;
   min_max.max = INT_MIN;
 

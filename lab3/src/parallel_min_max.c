@@ -91,6 +91,9 @@ int main(int argc, char **argv) {
   struct timeval start_time;
   gettimeofday(&start_time, NULL);
 
+  int start = 0, end = 0;
+  int step = (array_size + pnum - 1) / (pnum); // elements / process
+
   for (int i = 0; i < pnum; i++) {
     pid_t child_pid = fork();
     if (child_pid >= 0) {
@@ -101,10 +104,15 @@ int main(int argc, char **argv) {
 
         // parallel somehow
 
+        start = i * step;
+        end = i * (step + 1);
+        if (end > array_size) end = array_size;
+
         if (with_files) {
           // use files here
         } else {
           // use pipe here
+
         }
         return 0;
       }
@@ -132,7 +140,8 @@ int main(int argc, char **argv) {
     if (with_files) {
       // read from files
     } else {
-      // read from pipes
+      // Pipes
+
     }
 
     if (min < min_max.min) min_max.min = min;

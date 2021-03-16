@@ -5,6 +5,7 @@ void RevertString(char *str)
 {
   int len, i;
   char temp;
+  
   if (str == 0) return;
   
   len = strlen(str);
