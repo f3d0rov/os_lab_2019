@@ -109,11 +109,28 @@ int main(int argc, char **argv) {
   int step = (array_size + pnum - 1) / (pnum); // elements / process
   signal(SIGCHLD, SIG_IGN); // Ignore children return
 
-  int *pipefds[2];
-  if (with_files) {
-    
+  int (*pipefds)[2];
+  if (!with_files) {
+    pipefds = malloc(sizeof(int[2]) * pnum);
     for (int i = 0; i < pnum; ++i) {
-      pipe(pipefds[i]);
+      int e = pipe(pipefds[i]);
+      if (e < 0) {
+        switch (errno) {
+          case EFAULT:
+            printf("pipe() error (EFAULT): pipefd is not valid\n");
+            break;
+          case EMFILE:
+            printf("pipe() error (EMFILE): the per-process limit on the number of open file descriptors has been reached\n");
+            break;
+          case ENFILE:
+            printf("pipe() error (ENFILE): The user hard limit on memory that can be allocated for pipes has been reached and the caller is not privileged");
+            break;
+          default:
+            printf("pipe() error #%d\n", errno);
+        }
+        
+        return -1;
+      }
     }
   }
   
@@ -147,7 +164,10 @@ int main(int argc, char **argv) {
 
         } else {
           // use pipe here
-
+          write(pipefds[i][1], &mm.min, sizeof(mm.min));
+          write(pipefds[i][1], &mm.max, sizeof(mm.max));
+          close(pipefds[i][0]);
+          close(pipefds[i][1]);
         }
 
         return 0;
@@ -190,7 +210,10 @@ int main(int argc, char **argv) {
       free(path);
     } else {
       // Pipes
-
+      read(pipefds[i][0], &min, sizeof(min));
+      read(pipefds[i][0], &max, sizeof(max));
+      close(pipefds[i][0]);
+      close(pipefds[i][1]);
     }
 
     if (min < min_max.min) min_max.min = min;
@@ -206,7 +229,7 @@ int main(int argc, char **argv) {
   free(array);
 
   if (!with_files) {
-    free()
+    free(pipefds);
   }
 
   printf("Min: %d\n", min_max.min);
