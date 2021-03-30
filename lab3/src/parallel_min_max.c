@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
             printf("pipe() error (EMFILE): the per-process limit on the number of open file descriptors has been reached\n");
             break;
           case ENFILE:
-            printf("pipe() error (ENFILE): The user hard limit on memory that can be allocated for pipes has been reached and the caller is not privileged");
+            printf("pipe() error (ENFILE): the user hard limit on memory that can be allocated for pipes has been reached and the caller is not privileged");
             break;
           default:
             printf("pipe() error #%d\n", errno);

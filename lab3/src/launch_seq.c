@@ -14,13 +14,19 @@
 #include <getopt.h>
 
 #define EXEC_PATH "./sequential_min_max"
-#define SEED "0"
-#define ARRAY_SIZE "10"
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s seed arraysize\n", argv[0]);
+    return 1;
+  }
+
   int f = fork();
   if (f > 0) {
-    execl(EXEC_PATH, EXEC_PATH, SEED, ARRAY_SIZE, NULL);
+    printf("child PID: %d\n", f);
+    wait(NULL);
+  } else {
+    execv(EXEC_PATH, argv);
   }
   return 0;
 }
