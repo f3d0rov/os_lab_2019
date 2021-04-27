@@ -27,77 +27,7 @@ int main(int argc, char **argv) {
   int pnum = -1;
   bool with_files = false;
 
-  while (true) {
-    int current_optind = optind ? optind : 1;
-
-    static struct option options[] = {{"seed", required_argument, 0, 0},
-                                      {"array_size", required_argument, 0, 0},
-                                      {"pnum", required_argument, 0, 0},
-                                      {"by_files", no_argument, 0, 'f'},
-                                      {0, 0, 0, 0}};
-
-    int option_index = 0;
-    int c = getopt_long(argc, argv, "f", options, &option_index);
-
-    if (c == -1) break;
-
-    switch (c) {
-      case 0:
-        switch (option_index) {
-          case 0:
-            seed = atoi(optarg);
-            // your code here
-            // error handling
-            break;
-          case 1:
-            array_size = atoi(optarg);
-            //  your code here
-            if (array_size <= 0) {
-              printf("array_size must be a positive integer\n");
-              return -1;
-            }
-            // error handling
-            break;
-          case 2:
-            pnum = atoi(optarg);
-            // your code here
-            // error handling
-            if (pnum <= 0) {
-              printf("pnum must be a positive integer\n");
-              return -1;
-            }
-            break;
-          case 3:
-            with_files = true;
-            break;
-
-          defalut:
-            printf("Index %d is out of options\n", option_index);
-        }
-        break;
-      case 'f':
-        with_files = true;
-        break;
-
-      case '?':
-        break;
-
-      default:
-        printf("getopt returned character code 0%o?\n", c);
-    }
-  }
-
-  if (optind < argc) {
-    printf("Has at least one no option argument\n");
-    return 1;
-  }
-
-  if (seed == -1 || array_size == -1 || pnum == -1) {
-    printf("Usage: %s --seed \"num\" --array_size \"num\" --pnum \"num\" \n",
-           argv[0]);
-    return 1;
-  }
-
+ 
   int *array = malloc(sizeof(int) * array_size);
   GenerateArray(array, array_size, seed);
   int active_child_processes = 0;
@@ -270,3 +200,4 @@ char *get_file_path(int i) {
   free(number);
   return path;
 }
+ 
